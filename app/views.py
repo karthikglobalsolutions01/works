@@ -1,29 +1,40 @@
+
+
+
+     
+import pdfplumber
+import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from .serializer import PDFFormSerializer
-import PyPDF2
 
-class UploadPDFView(APIView):
-    def process_pdf(self, file_path):
-        with open(file_path, 'rb') as file:
-            pdf_reader = PyPDF2.PdfFileReader(file)
-            num_pages = pdf_reader.numPages
-            # Perform processing or extract information as needed
-            # Example: Extract text from the first page
-            first_page_text = pdf_reader.getPage(0).extractText()
-        return num_pages, first_page_text
+class ReadPDFView(APIView):
+    def post(self, request):
+        data = request.data.get('pdf_file')
+        
+        with pdfplumber.open(data) as pdfs:
+            first_page_text = pdfs.pages[0].extract_text()
 
-    def post(self, request, *args, **kwargs):
-        serializer = PDFFormSerializer(data=request.data)
-        if serializer.is_valid():
-            pdf_file = serializer.validated_data['pdf_file']
-            # Save the file temporarily
-            with open('temp.pdf', 'wb') as temp_file:
-                for chunk in pdf_file.chunks():
-                    temp_file.write(chunk)
-            # Process the PDF
-            num_pages, first_page_text = self.process_pdf('temp.pdf')
-            # You can now use 'num_pages' and 'first_page_text' as needed
-            return Response({'num_pages': num_pages, 'first_page_text': first_page_text}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        result_dict = self.extract_info(first_page_text)
+        return Response(result_dict)
+
+    def extract_info(self, first_page_text):
+        inv_number = self.extract_info_by_pattern("[0-9]+/[0-9]+/H/[0-9]+", first_page_text)
+        cstin = self.extract_info_by_pattern("[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{2}Z[A-Z]", first_page_text)
+        gstin = self.extract_info_by_pattern("[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{2}Z[A-Z]{1}", first_page_text)
+        state_code = self.extract_info_by_pattern("State Code:.+", first_page_text)
+        invoice_amount = self.extract_info_by_pattern("Invoice Amount:.+", first_page_text)
+
+        result_dict = {
+            "Invoice Number": inv_number[0] if inv_number else None,
+            "CSTIN": cstin[0] if cstin else None,
+            "GSTIN": gstin[0] if gstin else None,
+            "State Code": state_code[0] if state_code else None,
+            "Invoice Amount": invoice_amount[0] if invoice_amount else None
+        }
+
+        return result_dict
+
+    def extract_info_by_pattern(self, pattern, first_page_text):
+        matches = re.findall(pattern, first_page_text)
+        return matches
+     

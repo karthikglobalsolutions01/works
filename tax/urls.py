@@ -15,9 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from app.views import UploadPDFView
+from app.views import ReadPDFView
 
 urlpatterns = [
-    path('upload_pdf/', UploadPDFView.as_view(), name='upload_pdf'),
+    # path('upload_pdf/', UploadPDFView.as_view(), name='upload_pdf'),
+    path('read_pdf/', ReadPDFView.as_view(), name='read_pdf'),
     # Add other URL patterns as needed
 ]
