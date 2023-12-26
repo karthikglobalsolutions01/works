@@ -1,7 +1,3 @@
-
-
-
-     
 import pdfplumber
 import re
 from rest_framework.views import APIView
@@ -73,15 +69,19 @@ class ReadPDFView(APIView):
         # Example: Return data as a JSON response
         response_data = [{"id":record.id,"Invoice_Number": record.Invoice_Number, "CSTIN": record.CSTIN, "GSTIN": record.GSTIN, "State_Code": record.State_Code} for record in pdf_info_records]
         return Response(response_data)
-   
 class DeletePut(APIView):
     def put(self, request, id):
         pdf_info = Pdf_Info_Table.objects.get(id=id)
-        serializer = PDFFormSerializer(pdf_info, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        data = request.data
+        print(data.get)
+
+        # Check if the provided invoice number matches the existing one
+        if pdf_info.Invoice_Number == data.get("Invoice_Number"):
+            serializer = PDFFormSerializer(pdf_info, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                updated_instance = serializer.save()
+                return Response({updated_instance.data})
+            return Response(serializer.errors, status=400)
 
     def delete(self, request, id):
         pdf_info =Pdf_Info_Table.objects.get(id=id)
