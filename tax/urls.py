@@ -20,7 +20,9 @@ from app.views import ReadPDFView,DeletePut
 urlpatterns = [
     # path('upload_pdf/', UploadPDFView.as_view(), name='upload_pdf'),
     path('read_pdf/', ReadPDFView.as_view(), name='read_pdf'),
-    path('get_pdf/<int:id>',DeletePut.as_view(),name="DeletePut")
+    path('get_pdf/<int:id>',DeletePut.as_view(),name="DeletePut"),
+    # path('auth/',include('rest_framework.urls',namespace='rest_framework'))
+    # path('api/v1/auth/',include('rest_framework.url'))
 
     # Add other URL patterns as needed
 ]

@@ -158,3 +158,69 @@ class DeletePut(APIView):
 def delete(self, request, id):
     pdf_info =Pdf_Info_Table.objects.get(id=id)
     pdf_info.delete()
+
+       
+        #function based api views 
+        # @api_view(['GET','POST','PUT','DELETE'])
+        # def file_list(request):
+        #  try:
+        #   snippet = Pdf_Info_Table.objects.get(id=id)
+        #  except Pdf_Info_Table.DoesNotExist:
+        #    return Response(status=status.HTTP_404_NOT_FOUND)
+        #  if request.method == 'GET':
+        #     lol= Pdf_Info_Table.objects.all()
+        #     serializers=PDFFormSerializer(lol,many=True)
+        #     return Response(serializers.data)
+        #  elif request.method == 'POST':
+        #      serializers=PDFFormSerializer(data=request.data)
+        #      if serializers.is_valid():
+        #           serializers.save()
+        #           return Response(serializers.data)
+        #  elif request.method =='PUT':
+        #      serializers=PDFFormSerializer(snippet,data=request.data)
+        #      if serializers.is_valid():
+        #          serializers.save()
+        #          return Response(serializers.data)
+            #mixin classes listmodel mixin will be used to get the data createmodelmixin will be used as post 
+#             #update model mixin used to update the data destroymodelmixin for destroying 
+# class mixins(mixins.RetrieveModelMixin,
+#              mixins.UpdateModelMixin,
+#              mixins.DestroyModelMixin,
+#              mixins.ListModelMixin,
+#              generics.GenericAPIView):
+#     queryset=Pdf_Info_Table.objects.all()
+#     serializer_class=PDFFormSerializer
+#     def get(self,request):
+#         return self.list(request)
+#     def post(self,request):
+#         return self.create(request)
+#     def get(self,request,**kwargs):#to get a particular element using a id 
+#         return self.retrieve(request,**kwargs)
+#     def put(self,request,**kwargs):
+#         return self.update(request,**kwargs)
+# this is a authentication process a basic authentication which is doen locally if we  ta ke that and place in settings it will be globally applied 
+# class viewset(viewsets.ModelViewSet):
+#     queryset=Pdf_Info_Table.objects.all()
+#     serializers=PDFFormSerializer
+#     authentication_class=[SessionAuthentication,TokenAuthentication]
+#     permission_classes=[IsAuthenticated]
+#     permission_classes=[IsAdminUser]
+    
+    #authentication and permission 
+    #types of authentication 
+    #basic authentication,token authentication ,session authentication remote user authentications
+    
+            
+            
+            
+             
+            
+            
+    # def put(self,request):
+    #  username = request.data('result_dict')
+    #  user = Pdf_Info_Table.objects.get(CSTIN)
+    #  serialized = PDFFormSerializer(data = request.data)
+    #  if serialized.is_valid():
+    #     serialized.update(user,serialized.valsidated_data)
+    #session authentication done on backside unauthorized http 403 forbidden it  will show 
+
